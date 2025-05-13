@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Class Blocker",
+  "version": "1.0",
+  "description": "Blocks HTML elements with specified class names",
+  "permissions": ["storage", "activeTab", "tabs"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+} 
