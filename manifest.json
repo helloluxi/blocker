@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Class Blocker",
+  "name": "Blocker",
   "version": "1.0",
   "description": "Blocks HTML elements with specified class names",
   "permissions": ["storage", "activeTab", "tabs"],

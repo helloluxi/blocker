@@ -8,17 +8,30 @@ document.addEventListener('DOMContentLoaded', () => {
   // Hide the class list container
   classList.style.display = 'none';
 
+  // Get current domain and set it as prefix
+  chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    const url = new URL(tabs[0].url);
+    const domain = url.hostname.split('.').slice(-2).join('.');
+    input.placeholder = `${domain}::`;
+  });
+
   addButton.addEventListener('click', () => {
-    const className = input.value.trim();
-    if (className) {
-      chrome.storage.sync.get(['blockedClasses'], (result) => {
-        const classes = result.blockedClasses || [];
-        if (!classes.includes(className)) {
-          classes.push(className);
-          chrome.storage.sync.set({ blockedClasses: classes }, () => {
-            input.value = '';
-          });
-        }
+    const selector = input.value.trim();
+    if (selector) {
+      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        const url = new URL(tabs[0].url);
+        const domain = url.hostname.split('.').slice(-2).join('.');
+        const fullSelector = `${domain}::${selector}`;
+
+        chrome.storage.sync.get(['blockedClasses'], (result) => {
+          const blockedItems = result.blockedClasses || [];
+          if (!blockedItems.includes(fullSelector)) {
+            blockedItems.push(fullSelector);
+            chrome.storage.sync.set({ blockedClasses: blockedItems }, () => {
+              input.value = '';
+            });
+          }
+        });
       });
     }
   });
@@ -29,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   downloadButton.addEventListener('click', () => {
     chrome.storage.sync.get(['blockedClasses'], (result) => {
-      const classes = result.blockedClasses || [];
-      const content = classes.join('\n');
+      const blockedItems = result.blockedClasses || [];
+      const content = blockedItems.join('\n');
       const blob = new Blob([content], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       

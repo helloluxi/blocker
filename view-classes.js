@@ -6,9 +6,17 @@ chrome.storage.sync.get(['blockedClasses'], (result) => {
   classList.innerHTML = classes.map(className => `
     <div class="class-item">
       <span class="class-name">${className}</span>
-      <button onclick="removeClass('${className}')">Remove</button>
+      <button data-class="${className}">Remove</button>
     </div>
   `).join('');
+
+  // Add event listener for all remove buttons
+  classList.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+      const className = e.target.dataset.class;
+      removeClass(className);
+    }
+  });
 });
 
 function removeClass(className) {
@@ -21,7 +29,7 @@ function removeClass(className) {
       classList.innerHTML = updatedClasses.map(className => `
         <div class="class-item">
           <span class="class-name">${className}</span>
-          <button onclick="removeClass('${className}')">Remove</button>
+          <button data-class="${className}">Remove</button>
         </div>
       `).join('');
     });
