@@ -1,5 +1,17 @@
+function removeYouTubeDots() {
+  const elements = document.querySelectorAll('ytd-guide-entry-renderer');
+  elements.forEach(element => {
+    element.setAttribute('line-end-style', 'none');
+  });
+}
+
 function blockElements() {
   const currentDomain = window.location.hostname.split('.').slice(-2).join('.');
+  
+  // Remove YouTube dots if on YouTube
+  if (currentDomain === 'youtube.com') {
+    removeYouTubeDots();
+  }
   
   chrome.storage.sync.get(['blockedClasses'], (result) => {
     const blockedItems = result.blockedClasses || [];
