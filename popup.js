@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
     const url = new URL(tabs[0].url);
     const domain = url.hostname.split('.').slice(-2).join('.');
-    input.placeholder = `${domain}::`;
+    input.value = `${domain}::`;
   });
 
   addButton.addEventListener('click', () => {
@@ -21,12 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
         const url = new URL(tabs[0].url);
         const domain = url.hostname.split('.').slice(-2).join('.');
-        const fullSelector = `${domain}::${selector}`;
 
         chrome.storage.sync.get(['blockedClasses'], (result) => {
           const blockedItems = result.blockedClasses || [];
-          if (!blockedItems.includes(fullSelector)) {
-            blockedItems.push(fullSelector);
+          if (!blockedItems.includes(selector)) {
+            blockedItems.push(selector);
             chrome.storage.sync.set({ blockedClasses: blockedItems }, () => {
               input.value = '';
             });
