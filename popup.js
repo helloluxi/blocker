@@ -19,17 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const selector = input.value.trim();
     if (selector) {
       chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        const url = new URL(tabs[0].url);
-        const domain = url.hostname.split('.').slice(-2).join('.');
-
         chrome.storage.sync.get(['blockedClasses'], (result) => {
-          const blockedItems = result.blockedClasses || [];
-          if (!blockedItems.includes(selector)) {
-            blockedItems.push(selector);
-            chrome.storage.sync.set({ blockedClasses: blockedItems }, () => {
-              input.value = '';
-            });
-          }
+          const items = result.blockedClasses || [];
+          items.push(selector);
+          chrome.storage.sync.set({ blockedClasses: items }, () => {
+            input.value = '';
+          });
         });
       });
     }
@@ -45,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const content = blockedItems.join('\n');
       const blob = new Blob([content], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
-      
+
       const a = document.createElement('a');
       a.href = url;
       a.download = 'blocked-classes.txt';
