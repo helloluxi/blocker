@@ -10,21 +10,23 @@ function blockElements() {
     });
   }
   
-  chrome.storage.sync.get(['blockedClasses'], (result) => {
-    const blockedItems = result.blockedClasses || [];
-    blockedItems.forEach(item => {
-      let selector = item, domain = null;
-      if (item.includes('::')) {
-        [domain, selector] = item.split('::');
-      }
-      if (domain === null || domain === currentDomain) {
-        const elements = document.querySelectorAll(`.${selector}, #${selector}`);
-        Array.from(elements).forEach(element => {
-          element.style.display = 'none';
-        });
-      }
+  fetch('https://xlu.casa/s/block.txt')
+    .then(response => response.text())
+    .then(text => {
+      const blockedItems = text.split('\n').map(line => line.trim()).filter(line => line);
+      blockedItems.forEach(item => {
+        let selector = item, domain = null;
+        if (item.includes('::')) {
+          [domain, selector] = item.split('::');
+        }
+        if (domain === null || domain === currentDomain) {
+          const elements = document.querySelectorAll(`.${selector}, #${selector}`);
+          Array.from(elements).forEach(element => {
+            element.style.display = 'none';
+          });
+        }
+      });
     });
-  });
 }
 
 // Initial blocking
